@@ -20,7 +20,7 @@ export default async function skinsHandler(req:Request,res:Response){
    if(skins){
         for(let i =0; i< skins.data.Entitlements.length;i++){
             let query
-            if(req.body.free == "true"){
+            if(req.body.free == 1){
                  query = "select skins.name,levels.iconlink,skins.tier from skins inner join levels on skins.name = levels.name where levels.uuid = ($1) and not tier =0"
             }else{
                  query = "select skins.name,levels.iconlink,skins.tier from skins inner join levels on skins.name = levels.name where levels.uuid = ($1) and not tier =0 and not tier=1"
