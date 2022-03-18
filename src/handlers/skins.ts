@@ -19,7 +19,7 @@ export default async function skinsHandler(req:Request,res:Response){
    const client =await pool.connect()
    if(skins){
         for(let i =0; i< skins.data.Entitlements.length;i++){
-            const query = "select skins.name,levels.iconlink,skins.tier from skins inner join levels on skins.name = levels.name where levels.uuid = ($1) and not tier =0 and not tier =1"
+            const query = "select skins.name,levels.iconlink,skins.tier from skins inner join levels on skins.name = levels.name where levels.uuid = ($1) and not tier =0"
             const result = await client.query(query,[skins.data.Entitlements[i].ItemID])
             if(result.rows.length > 0){
                 skinsList.push({"name":result.rows[0].name,"icon":result.rows[0].iconlink})
