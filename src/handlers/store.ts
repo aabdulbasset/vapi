@@ -21,10 +21,10 @@ export default function storeHandler(req:Request ,res:Response){
 
         try{
             const night = response.data.BonusStore.BonusStoreOffers
-            let nightSkinArray:skin[] = await Promise.all(response.data.BonusStore.BonusStoreOffers.map(async (item:string) => {
+            let nightSkinArray:skin[] = await Promise.all(night.map(async (item:any) => {
                 
-                const res  = await axios.get(`https://valorant-api.com/v1/weapons/skinlevels/${item}`)
-                return {"name":res.data.data.displayName,"icon":res.data.data.displayIcon}
+                const res  = await axios.get(`https://valorant-api.com/v1/weapons/skinlevels/${item.Offer.Rewards[0].ItemID}`)
+                return {"name":res.data.data.displayName,"icon":res.data.data.displayIcon,"price":item.DiscountCosts['85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741']}
             }))
             res.send({"daily":dailySkinArray,"night":nightSkinArray,"hasnight":true})
         }catch(err){
