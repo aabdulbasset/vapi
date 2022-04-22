@@ -6,12 +6,22 @@ type skin = {
     icon:string
 }
 export default function storeHandler(req:Request ,res:Response){
-    
+    let region = "eu"
+    let regionObj = {
+        "eu":"eu",
+        "na":"na",
+        "kr":"kr",
+        "ap":"ap",
+    }
+    if(req.body.region && req.body.region in regionObj){
+        region = req.body.region
+    }
     const headers = {
         "Authorization":`Bearer ${req.body.authToken}`,
         "X-Riot-Entitlements-JWT": req.body.entToken
     }
-    axios.get(`https://pd.eu.a.pvp.net/store/v2/storefront/${req.body.sub}`,{headers})
+    console.log(region)
+    axios.get(`https://pd.${region}.a.pvp.net/store/v2/storefront/${req.body.sub}`,{headers})
     .then(async (response) => {
         let dailySkinArray:skin[] = await Promise.all(response.data.SkinsPanelLayout.SingleItemOffers.map(async (item:string) => {
             

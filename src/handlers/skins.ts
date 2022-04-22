@@ -5,13 +5,24 @@ import {pool} from '../utils/db'
 //actual functions
 export default async function skinsHandler(req:Request,res:Response){
     let skins 
-    
+    let region = "eu"
+    let regionObj = {
+        "eu":"eu",
+        "na":"na",
+        "kr":"kr",
+        "jp":"jp",
+        "oc":"oc",
+        "sea":"sea",
+    }
+    if(req.body.region && req.body.region in regionObj){
+        region = req.body.region
+    }
     const headers= {
         "Authorization":`Bearer ${req.body.authToken}`,
         'X-Riot-Entitlements-JWT':req.body.entToken
     }
    try{
-       skins = await axios.get(`https://pd.eu.a.pvp.net/store/v1/entitlements/${req.body.sub}/e7c63390-eda7-46e0-bb7a-a6abdacd2433`,{headers})
+       skins = await axios.get(`https://pd.${region}.a.pvp.net/store/v1/entitlements/${req.body.sub}/e7c63390-eda7-46e0-bb7a-a6abdacd2433`,{headers})
    }catch(err){
        res.sendStatus(400)
    }
