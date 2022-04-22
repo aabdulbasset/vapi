@@ -2,6 +2,15 @@ import {Request,Response } from "express";
 import axios, { AxiosError } from 'axios'
 import jwt from 'jsonwebtoken'
 
+const { Agent } = require('https');
+const ciphers = [
+    'TLS_CHACHA20_POLY1305_SHA256',
+    'TLS_AES_128_GCM_SHA256',
+    'TLS_AES_256_GCM_SHA384',
+    'TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256'
+];
+const agent = new Agent({ ciphers: ciphers.join(':'), honorCipherOrder: true, minVersion: 'TLSv1.2' });
+
 export default async function authHandler(req: Request,res:Response){
     let authToken:string;
     let entToken;
@@ -13,7 +22,9 @@ export default async function authHandler(req: Request,res:Response){
     }
     try{
 
-        cookiesRequest = await axios.post(options.uri,options.formData)
+        cookiesRequest = await axios.post(options.uri,options.formData,{
+            httpsAgent: agent
+        })
         
     }
     catch(err:any){
@@ -38,7 +49,7 @@ export default async function authHandler(req: Request,res:Response){
     }
     let loginRequest
     try {
-        loginRequest = await inst.put("https://auth.riotgames.com/api/v1/authorization",data,{withCredentials:true})}
+        loginRequest = await inst.put("https://auth.riotgames.com/api/v1/authorization",data,{httpsAgent: agent})}
     catch(err){
         res.send({"error":"Rate limited"})
         return

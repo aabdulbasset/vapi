@@ -10,9 +10,7 @@ export default async function skinsHandler(req:Request,res:Response){
         "eu":"eu",
         "na":"na",
         "kr":"kr",
-        "jp":"jp",
-        "oc":"oc",
-        "sea":"sea",
+        "ap":"ap",
     }
     if(req.body.region && req.body.region in regionObj){
         region = req.body.region
