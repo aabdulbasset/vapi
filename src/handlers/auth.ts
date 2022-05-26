@@ -35,6 +35,7 @@ export default async function authHandler(req: Request,res:Response){
         inst.defaults.headers.put['cookie'] = req.body.cookie
         data = {
             'type': 'multifactor',
+            "rememberDevice": true,
             'code': req.body.code,
             
         }
