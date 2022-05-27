@@ -39,7 +39,7 @@ const getAgents = async ()=>{
 }
 const getNames = async (players:any)=>{
     let agentsUUID = await getAgents()
-
+    console.log(agentsUUID)
     let playersInfo = Promise.all(players.map(async (player:any)=>{
 
         let response = await axios.put(`https://pd.${region}.a.pvp.net/name-service/v2/players`,[player.Subject])
