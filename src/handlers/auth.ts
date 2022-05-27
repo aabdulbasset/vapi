@@ -1,5 +1,5 @@
 import {Request,Response } from "express";
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import jwt from 'jsonwebtoken'
 
 const { Agent } = require('https');
@@ -16,6 +16,8 @@ export default async function authHandler(req: Request,res:Response){
     let entToken;
     let cookiesRequest:any
     const inst = axios.create()
+    // Set user agent to riot games client
+    inst.defaults.headers.common['User-Agent'] = "RiotClient/50.0.0.4396195.4381201 rso-auth (Windows;10;;Professional, x64)"
     let options = {
             uri:'https://auth.riotgames.com/api/v1/authorization',
             formData : {"acr_values": "","claims": "","client_id": "riot-client","code_challenge": "","code_challenge_method": "","nonce": "HDewORkVWVNXvZJLwvQlzA","redirect_uri": "http://localhost/redirect","response_type": "token id_token","scope": "link"}
@@ -56,10 +58,11 @@ export default async function authHandler(req: Request,res:Response){
         return
     }
     const pattern = new RegExp('access_token=(.*)&scope')
-   
+
     if(loginRequest.data.error == "auth_failure"){
             res.send({"error":"Wrong credentials"})
     }else if(loginRequest.data.type="multifactor" && loginRequest.data.multifactor){
+            
             res.send({"cookie":loginRequest.headers['set-cookie']})
     }else if(loginRequest.data.type="multifactor" && loginRequest.data.response){
         authToken = pattern.exec(loginRequest.data.response.parameters.uri)![1]

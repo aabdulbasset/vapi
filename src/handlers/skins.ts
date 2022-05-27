@@ -36,6 +36,7 @@ export default async function skinsHandler(req:Request,res:Response){
             }
             const result = await client.query(query,[skins.data.Entitlements[i].ItemID])
             if(result.rows.length > 0){
+                if(result.rows[0].name ||result.rows[0].iconlink )
                 skinsList.push({"name":result.rows[0].name,"icon":result.rows[0].iconlink})
             }
         }
