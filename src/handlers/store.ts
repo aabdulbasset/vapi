@@ -20,7 +20,7 @@ export default function storeHandler(req:Request ,res:Response){
         "Authorization":`Bearer ${req.body.authToken}`,
         "X-Riot-Entitlements-JWT": req.body.entToken
     }
-    console.log(region)
+
     axios.get(`https://pd.${region}.a.pvp.net/store/v2/storefront/${req.body.sub}`,{headers})
     .then(async (response) => {
         let dailySkinArray:skin[] = await Promise.all(response.data.SkinsPanelLayout.SingleItemOffers.map(async (item:string) => {
