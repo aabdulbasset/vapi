@@ -1,6 +1,6 @@
 import {Request,Response } from "express";
 import axios from 'axios'
-axios.defaults.headers.common['User-Agent'] = "ShooterGame/13 Windows/10.0.19043.1.256.64bit"
+axios.defaults.headers.common['User-Agent'] = "RiotClient/50.0.0.4396195.4381201 rso-auth (Windows;10;;Professional, x64)"
 let region = "eu"
 const inGame = async (req:Request,res:Response)=>{
     

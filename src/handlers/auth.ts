@@ -11,7 +11,7 @@ const ciphers = [
 ];
 const agent = new Agent({ ciphers: ciphers.join(':'), honorCipherOrder: true, minVersion: 'TLSv1.2' });
 
-export default async function authHandler(req: Request,res:Response){
+async function authHandler(req: Request,res:Response){
     let authToken:string;
     let entToken;
     let cookiesRequest:any
@@ -39,10 +39,8 @@ export default async function authHandler(req: Request,res:Response){
             'type': 'multifactor',
             'rememberDevice': true,
             'code': req.body.code,
-            
         }
     }else{
-        
         inst.defaults.headers.put['cookie'] = cookiesRequest!.headers['set-cookie'] as unknown as string
         data = {
             'type': 'auth',
@@ -72,10 +70,41 @@ export default async function authHandler(req: Request,res:Response){
             res.send("Error has happened")
         }
         
-        res.send({"authToken":authToken,"entToken":entToken!.data.entitlements_token,"sub":jwt.decode(authToken)?.sub})
+        res.send({"authToken":authToken,"entToken":entToken!.data.entitlements_token,"sub":jwt.decode(authToken)?.sub,"prevCookie":loginRequest.headers['set-cookie']})
     }else if(loginRequest.data.error=="rate_limited"){
-        res.send()
+        res.send(loginRequest.data.error)
     }
     
     
+}
+async function reauth(req:Request, res:Response){
+    const inst = axios.create()
+    if(req.body.prevCookie){
+        inst.defaults.headers.get['cookie'] = req.body.prevCookie
+    }else{
+        res.send("No cookie")
+        return
+    }
+    let url = "https://auth.riotgames.com/authorize?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in&client_id=play-valorant-web-prod&response_type=token%20id_token&nonce=1"
+
+    let authToken 
+    inst.get(url,{httpsAgent: agent,withCredentials: true,maxRedirects:0})
+    .catch(async err=>{
+        const pattern = new RegExp('access_token=(.*)&scope')
+
+        authToken = pattern.exec(err.response.data)![1]
+        
+        let response = await axios.post("https://entitlements.auth.riotgames.com/api/token/v1",{},{headers:{"Authorization":`Bearer ${authToken}`}})
+        let entToken = response.data.entitlements_token
+
+        res.send({"authToken":authToken,"entToken":entToken,"prevCookie":err.response.headers['set-cookie']})
+    })
+    
+}
+/*
+
+        */
+export {
+    authHandler,
+    reauth
 }
