@@ -42,10 +42,9 @@ const getNames = async (players:any)=>{
     let agentsUUID = await getAgents()
     
     let playersInfo = Promise.all(players.map(async (player:any)=>{
-       
         let response = await axios.put(`https://pd.${region}.a.pvp.net/name-service/v2/players`,[player.Subject])
         let result = await response.data[0]
-        return {"name":`${await result.GameName}#${await result.TagLine}`,"team":await player.TeamID,"sub":await player.Subject,"agent":agentsUUID[player.CharacterID.toLowerCase()]}
+        return {"name":`${await result.GameName}#${await result.TagLine}`,"team":await player.TeamID,"sub":await player.Subject,"agent":agentsUUID[player.CharacterID.toLowerCase()],"level":player.PlayerIdentity.AccountLevel}
     }))
     return await playersInfo
     
@@ -79,17 +78,32 @@ const getRanks = async (players:string[],headers:any)=>{
         "23":"IMMORTAL 3",
         "24":"Radiant",
     }
+    let seasonsArray = await seasonsRequest.data.data
     let ranks = await Promise.all(players.map(async (player:any)=>{
+
         let url = `https://pd.${region}.a.pvp.net/mmr/v1/players/${player.sub}`
         let response = await axios.get(url,{headers})
         let result = await response.data
+        let highestRank=0;
         let rank
         try{
+            seasonsArray.forEach((season:any)=>{
+                try{
+                    if(result.QueueSkills.competitive.SeasonalInfoBySeasonID[season.uuid].CompetitiveTier>highestRank){
+                        highestRank = result.QueueSkills.competitive.SeasonalInfoBySeasonID[season.uuid].CompetitiveTier
+                        
+                    }
+                }catch(err){
+                    return
+                }
+            })
+            
             rank = result.QueueSkills.competitive.SeasonalInfoBySeasonID[seasonUUID].CompetitiveTier
         }catch(err){
+            console.log(err)
             rank = null
         }
-        return {...player,"rank":rankDict[rank]}
+        return {...player,"rank":rankDict[rank],"highestRank":rankDict[highestRank]}
     }))
     return ranks
 }
