@@ -90,14 +90,18 @@ async function reauth(req:Request, res:Response){
     let authToken 
     inst.get(url,{httpsAgent: agent,withCredentials: true,maxRedirects:0})
     .catch(async err=>{
-        const pattern = new RegExp('access_token=(.*)&scope')
+        try{
+            const pattern = new RegExp('access_token=(.*)&scope')
 
-        authToken = pattern.exec(err.response.data)![1]
-        
-        let response = await axios.post("https://entitlements.auth.riotgames.com/api/token/v1",{},{headers:{"Authorization":`Bearer ${authToken}`}})
-        let entToken = response.data.entitlements_token
-
-        res.send({"authToken":authToken,"entToken":entToken,"prevCookie":err.response.headers['set-cookie']})
+            authToken = pattern.exec(err.response.data)![1]
+            
+            let response = await axios.post("https://entitlements.auth.riotgames.com/api/token/v1",{},{headers:{"Authorization":`Bearer ${authToken}`}})
+            let entToken = response.data.entitlements_token
+    
+            res.send({"authToken":authToken,"entToken":entToken,"prevCookie":err.response.headers['set-cookie']})
+        }catch(err){
+            res.send("Error has happened")
+        }
     })
     
 }
