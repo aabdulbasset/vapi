@@ -23,6 +23,7 @@ export default async function skinsHandler(req:Request,res:Response){
        skins = await axios.get(`https://pd.${region}.a.pvp.net/store/v1/entitlements/${req.body.sub}/e7c63390-eda7-46e0-bb7a-a6abdacd2433`,{headers})
    }catch(err){
        res.sendStatus(400)
+       return
    }
    let skinsList = []
    const client =await pool.connect()
@@ -43,4 +44,5 @@ export default async function skinsHandler(req:Request,res:Response){
     }
    client.release()
    res.send(skinsList)
+   return
 }
