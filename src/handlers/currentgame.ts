@@ -18,6 +18,7 @@ const inGame = async (req:Request,res:Response)=>{
         let ent = req.body.entToken
         let auth = req.body.authToken
         let url = `https://glz-${region}-1.${region}.a.pvp.net/core-game/v1/players/${sub}`
+        
         let headers = {
             "Authorization":`Bearer ${auth}`,
             "X-Riot-Entitlements-JWT": ent
@@ -53,6 +54,7 @@ const getNames = async (players:any)=>{
 
 const getRanks = async (players:string[],headers:any)=>{
     let seasonsRequest = await axios.get("https://valorant-api.com/v1/seasons")
+    
     let seasonUUID = await seasonsRequest.data.data[seasonsRequest.data.data.length-1].uuid
     let rankDict:any = {
         "3":"IRON 1",
@@ -80,7 +82,6 @@ const getRanks = async (players:string[],headers:any)=>{
     }
     let seasonsArray = await seasonsRequest.data.data
     let ranks = await Promise.all(players.map(async (player:any)=>{
-
         let url = `https://pd.${region}.a.pvp.net/mmr/v1/players/${player.sub}`
         let response = await axios.get(url,{headers})
         let result = await response.data
@@ -97,8 +98,8 @@ const getRanks = async (players:string[],headers:any)=>{
                     return
                 }
             })
+            rank = result.QueueSkills.competitive.SeasonalInfoBySeasonID["67e373c7-48f7-b422-641b-079ace30b427"].CompetitiveTier
             
-            rank = result.QueueSkills.competitive.SeasonalInfoBySeasonID[seasonUUID].CompetitiveTier
         }catch(err){
             console.log(err)
             rank = null
