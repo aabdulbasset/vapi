@@ -22,6 +22,7 @@ export default async function skinsHandler(req:Request,res:Response){
    try{
        skins = await axios.get(`https://pd.${region}.a.pvp.net/store/v1/entitlements/${req.body.sub}/e7c63390-eda7-46e0-bb7a-a6abdacd2433`,{headers})
    }catch(err){
+       console.log(err)
        res.sendStatus(400)
        return
    }

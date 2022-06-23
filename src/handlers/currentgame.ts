@@ -126,7 +126,7 @@ const gameStatus = async (req:Request,res:Response)=>{
             "Authorization":`Bearer ${auth}`,
             "X-Riot-Entitlements-JWT": ent,
             "X-Riot-ClientPlatform": "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9",
-            "X-Riot-ClientVersion":"release-04.10-shipping-5-714978"
+            "X-Riot-ClientVersion":"release-05.00-shipping-6-725355"
         }
         let response = await axios.get(url,{headers})
         let result = await response.data
